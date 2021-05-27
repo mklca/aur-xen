@@ -36,7 +36,7 @@ makedepends=(
 	'vde2' 'lzo' 'pciutils' 'sdl2' 'systemd-libs'
 ) # last line from namcap, these depends are the xen depends
 # Actual makedepends.
-makedepends+=('wget' 'pandoc' 'valgrind' 'git' 'bin86' 'dev86' 'bison' 'gettext' 'flex' 'pixman' 'ocaml' 'fig2dev')
+makedepends+=('systemd' 'wget' 'pandoc' 'valgrind' 'git' 'bin86' 'dev86' 'bison' 'gettext' 'flex' 'pixman' 'ocaml' 'fig2dev')
 
 _source=(
 	"https://downloads.xenproject.org/release/xen/$pkgver/$pkgname-$pkgver.tar.gz"{,.sig}
