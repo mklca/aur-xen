@@ -113,7 +113,7 @@ done
 
 
 
-# stubdum handling
+# stubdom handling
 if [ "${_build_stubdom}" == "true" ]; then
 	source=("${source[@]}" "${_stubdom_source[@]}")
 	sha512sums=("${sha512sums[@]}" "${_stub_sums[@]}")
