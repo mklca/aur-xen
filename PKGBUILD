@@ -44,6 +44,7 @@ _source=(
 	"xen-intel-ucode.hook"
 	"xen-amd-ucode.hook"
 	"no-ld-no-pie.patch"
+	"gcc-11.patch"
 )
 
 validpgpkeys=('23E3222C145F4475FA8060A783FE14C957E82BD9') # Xen.org Xen tree code signing (signatures on the xen hypervisor and tools) <pgp@xen.org>
@@ -79,6 +80,7 @@ _sha512sums=(
 	"7a832de9b35f4b77ee80d33310b23886f4d48d1d42c3d6ef6f8e2b428bec7332a285336864b61cfa01d9a14c2023674015beb7527bd5849b069f2be88e6500cd" # xen-intel-ucode.hook
 	"99921b94a29fa7988c7fb5c17da8e598e777c972d6cae8c8643c991e5ff911a25525345ea8913945313d5c49fecf9da8cc3b83d47ab03928341e917b304370a9" # xen-amd-ucode.hook
 	"72edbacdb2b3b4449448e1bf7a6b31b58234eed1abe010db6dcf4033158edf095b081bc6eb89cde3156432dd35c449e1954aeefb2c4bc785a5d3f93de7b0fa76" # no-ld-no-pie.patch
+	"68d468b0a811bd8882992a605d16ab1e0e95dd5e4644bdcf1287ffb0db046dddcbdf740df7d7f32665cbb50088e9e4a7c7d69fbfbf42e460ebdc097caccdd7b2" # gcc-11.patch
 )
 
 _patch_sums=(
@@ -141,6 +143,7 @@ prepare() {
 	cd "${pkgbase}-${pkgver}"
 
 	patch -p1 < ../no-ld-no-pie.patch
+	patch -p1 < ../gcc-11.patch
 
 	if [ "${_build_stubdom}" == "true" ]; then
 
