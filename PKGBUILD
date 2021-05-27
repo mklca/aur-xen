@@ -240,22 +240,24 @@ package_xen() {
 
 	make "${_common_make_flags[@]}" DESTDIR="$pkgdir" install
 
+	rm -rf "$pkgdir"/var/run
 
-	mv "$pkgdir"/usr/lib64/efi "$pkgdir"/usr/lib/efi
-	rm -rf "$pkgdir"{/var/run,/usr/lib64}
-	#  This feels like The Arch Way, really.
-	find "${pkgdir}/usr/lib/efi" -type l -delete
-	mv "${pkgdir}/usr/lib/efi/xen-${pkgver}.efi" "${pkgdir}/usr/lib/efi/xen.efi"
-
+	#  Symlinks to prior installed versions are not The Arch Way, leave only the bare EFI binary
+	(cd "${pkgdir}/${_efi_dir}" && mv "$(realpath xen.efi)" xen.efi)
 
 	[ -d "$pkgdir"/etc/xen/scripts ] && backup+=($(find "$pkgdir"/etc/xen/scripts/ -type f | sed "s|^$pkgdir/||g"))
 
 	mkdir -p "${pkgdir}/var/log/xen/console"
 
-	# Remove hypervisor symlinks.
-	find "${pkgdir}/boot" -type l -delete
-	# Continued: This feels like The Arch Way, really.
-	mv "${pkgdir}/boot/xen-${pkgver}.gz" "${pkgdir}/boot/xen.gz"
+	# Continued: Trim hypervisor symlinks.
+	(cd "${pkgdir}/${_boot_dir}" && mv "$(realpath xen.gz)" xen.gz)
+
+	# Do all symlink removals after the directories have had the real
+	# binaries moved overtop any symlinks. Note that dependening on
+	# configuratation _efi_dir and _boot_dir may be the same directory, so
+	# don't clean any of them until they've all been processed.
+	find "${pkgdir}/${_efi_dir}" -type l -delete
+	find "${pkgdir}/${_boot_dir}" -type l -delete
 
 	# Remove syms.
 	find "${pkgdir}/usr/lib/debug" -type f \( -name '*-syms*' -or -name '*\.map' \) -delete
