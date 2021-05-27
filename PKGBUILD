@@ -5,6 +5,9 @@
 # Build Options
 _build_stubdom=${build_stubdom:-false}
 _build_qemu=${build_qemu:-true}
+_boot_dir=${boot_dir:-/boot}
+_efi_dir=${efi_dir:-/boot}
+_efi_mountpoint=${efi_mountpoint:-/efi}
 
 # Check http://xenbits.xen.org/xen-extfiles/ for updates
 _gmp=4.3.2
@@ -133,8 +136,12 @@ else
 	_config_qemu="--with-system-qemu=/usr/bin/qemu-system-x86_64"
 fi
 
-
-
+_common_make_flags=(
+  "BOOT_DIR=${_boot_dir}"
+  "EFI_DIR=${_efi_dir}"
+  "EFI_MOUNTPOINT=${_efi_mountpoint}"
+  'XEN_VENDORVERSION=arch'
+)
 
 # TODO: Setup users, dirs, etc.
 
@@ -193,7 +200,7 @@ build() {
 		--with-system-ovmf=/usr/share/ovmf/x64/OVMF.fd \
 		--with-system-seabios=/usr/share/qemu/bios-256k.bin
 
-	make XEN_VENDORVERSION=arch
+	make "${_common_make_flags[@]}"
 }
 
 package_xen() {
@@ -231,8 +238,8 @@ package_xen() {
 
 	cd "${pkgbase}-${pkgver}"
 
+	make "${_common_make_flags[@]}" DESTDIR="$pkgdir" install
 
-	make DESTDIR="$pkgdir" install
 
 	mv "$pkgdir"/usr/lib64/efi "$pkgdir"/usr/lib/efi
 	rm -rf "$pkgdir"{/var/run,/usr/lib64}
@@ -282,5 +289,5 @@ package_xen-docs() {
 	pkgdesc="Xen hypervisor documentation and man pages"
 	arch=("any")
 	cd "${pkgbase}-${pkgver}"
-	make DESTDIR="${pkgdir}" install-docs
+	make "${_common_make_flags[@]}" DESTDIR="$pkgdir" install-docs
 }
